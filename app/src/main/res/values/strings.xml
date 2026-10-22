@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Quint Launcher</string>
+    <string name="home_title">Inicio</string>
+    <string name="favorites_title">Favoritas</string>
+    <string name="all_apps_title">Todas las apps</string>
+    <string name="edit_favorites">Elegir favoritas</string>
+    <string name="done">Listo</string>
+    <string name="no_favorites">Todavía no elegiste favoritas. Tocá «Elegir favoritas» más abajo.</string>
+    <string name="edit_hint">Seleccioná las apps que querés ver arriba</string>
+</resources>
