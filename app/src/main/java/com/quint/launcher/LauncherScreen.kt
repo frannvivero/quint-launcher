@@ -144,7 +144,7 @@ fun LauncherScreen() {
                             onNightClick = { toggleNight() },
                             onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },
                         )
-                        Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.weight(1.2f))
                         SectionTitle(stringResource(R.string.favorites_title))
                         Dock(
                             favApps = favApps,
@@ -152,7 +152,7 @@ fun LauncherScreen() {
                             onAppClick = { onAppClick(it) },
                             onAppLongClick = { toggleFavorite(it.packageName) },
                         )
-                        Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.weight(0.8f))
                     }
                 }
 
