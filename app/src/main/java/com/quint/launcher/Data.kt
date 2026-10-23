@@ -75,9 +75,16 @@ class FavoritesStore(context: Context) {
         prefs.edit().putString(THEME_KEY, mode).apply()
     }
 
+    fun loadCity(): String = prefs.getString(CITY_KEY, "Federal") ?: "Federal"
+
+    fun saveCity(name: String) {
+        prefs.edit().putString(CITY_KEY, name).apply()
+    }
+
     private companion object {
         const val KEY = "favorites"
         const val THEME_KEY = "theme_mode"
+        const val CITY_KEY = "city"
     }
 }
 

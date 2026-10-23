@@ -6,7 +6,9 @@ Launcher para Android TV (pensado para una Quint de 32" con Android 11; todavía
 
 - Arriba a la derecha: hora, **red** (Wi‑Fi / Ethernet / sin conexión, se actualiza sola), **modo nocturno** (luna) y **ajustes**. Red y ajustes abren la configuración del sistema.
 - **Modo día/noche**: el botón de luna cambia entre *automático* (sigue el atardecer de Federal), *nocturno* y *diurno*. Queda guardado aunque apagues la tele.
-- **Clima de Federal, Entre Ríos**: temperatura, máxima y mínima, con ícono según el cielo (datos de Open-Meteo).
+- **Clima**: temperatura, máxima y mínima, ícono según el cielo, y las próximas 6 horas (datos de Open-Meteo). La ciudad se elige con el botón **Ciudad** (Federal por defecto).
+- **Fondo según la app en foco**: al pasar el control por una app, el fondo toma su banner muy atenuado.
+- **Protector de pantalla**: fotos de los banners de tus apps con el reloj grande. Activalo en Ajustes → Protector de pantalla → *Quint Launcher*.
 - Al bajar, toda la pantalla se desplaza (barra, favoritas y apps), así al volver arriba queda el fondo limpio.
 - **Favoritas**: una barra tipo dock con las apps que elijas.
 - **Todas las apps**: bajando con el control remoto aparece el resto, en orden alfabético.

@@ -69,6 +69,7 @@ fun TopBar(
     netType: NetType,
     night: Boolean,
     weather: Weather?,
+    cityName: String,
     onNetworkClick: () -> Unit,
     onNightClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -118,7 +119,7 @@ fun TopBar(
                 }
                 Column {
                     Text(
-                        text = if (weather != null) "Federal · ${weather.temp}°" else "Federal",
+                        text = if (weather != null) "$cityName · ${weather.temp}°" else cityName,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = p.ink,
@@ -249,6 +250,7 @@ fun Dock(
     editMode: Boolean,
     onAppClick: (AppEntry) -> Unit,
     onAppLongClick: (AppEntry) -> Unit,
+    onAppFocus: (AppEntry) -> Unit,
 ) {
     val p = LocalPalette.current
     val shape = RoundedCornerShape(36.dp)
@@ -293,6 +295,7 @@ fun Dock(
                         focusRequester = if (index == 0) firstFocus else null,
                         onClick = { onAppClick(app) },
                         onLongClick = { onAppLongClick(app) },
+                        onFocused = onAppFocus,
                     )
                 }
             }
@@ -310,6 +313,7 @@ fun AppTile(
     editMode: Boolean,
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
+    onFocused: (AppEntry) -> Unit = {},
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
@@ -330,7 +334,10 @@ fun AppTile(
 
     Column(
         modifier = columnModifier
-            .onFocusChanged { focused = it.isFocused }
+            .onFocusChanged {
+                focused = it.isFocused
+                if (it.isFocused) onFocused(app)
+            }
             .combinedClickable(
                 interactionSource = interaction,
                 indication = null,
