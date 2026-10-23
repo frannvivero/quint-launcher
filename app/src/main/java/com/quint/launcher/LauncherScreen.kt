@@ -117,6 +117,15 @@ fun LauncherScreen() {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val gridState = rememberLazyGridState()
+
+    // Clima: se consulta al abrir y después cada 30 minutos.
+    var weather by remember { mutableStateOf<Weather?>(null) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            withContext(Dispatchers.IO) { WeatherRepository.fetch() }?.let { weather = it }
+            delay(30 * 60 * 1000L)
+        }
+    }
     // Cuando el foco entra a la primera pantalla, esperamos un instante (para que el
     // grid termine su propio ajuste de foco) y recién ahí volvemos al inicio.
     var homeFocused by remember { mutableStateOf(false) }
@@ -155,6 +164,7 @@ fun LauncherScreen() {
                         TopBar(
                             netType = netType,
                             night = night,
+                            weather = weather,
                             onNetworkClick = { openSystem(Settings.ACTION_WIFI_SETTINGS) },
                             onNightClick = { toggleNight() },
                             onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },

@@ -67,6 +67,7 @@ private val AppleBlue = Color(0xFF0A84FF)
 fun TopBar(
     netType: NetType,
     night: Boolean,
+    weather: Weather?,
     onNetworkClick: () -> Unit,
     onNightClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -89,7 +90,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, top = 96.dp, bottom = 12.dp),
+            .padding(start = 8.dp, top = 40.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -101,6 +102,17 @@ fun TopBar(
                 color = p.ink,
             )
             Text(text = date, fontSize = 16.sp, color = p.muted)
+            Text(
+                text = if (weather != null) {
+                    val desc = if (weather.description.isNotEmpty()) " · ${weather.description}" else ""
+                    "Federal · ${weather.temp}°$desc"
+                } else {
+                    "Federal"
+                },
+                fontSize = 16.sp,
+                color = p.muted,
+                modifier = Modifier.padding(top = 4.dp),
+            )
         }
         Text(
             text = clock,
