@@ -4,7 +4,9 @@ Launcher para Android TV (pensado para una Quint de 32" con Android 11; todavía
 
 ## Qué tiene
 
-- Arriba a la derecha: hora, **red** (Wi‑Fi / Ethernet / sin conexión, se actualiza sola) y **ajustes**. Ambos abren la configuración del sistema.
+- Arriba a la derecha: hora, **red** (Wi‑Fi / Ethernet / sin conexión, se actualiza sola), **modo nocturno** (luna) y **ajustes**. Red y ajustes abren la configuración del sistema.
+- **Modo nocturno**: fondo negro y textos blancos. Queda guardado aunque apagues la tele.
+- Al bajar, toda la pantalla se desplaza (barra, favoritas y apps), así al volver arriba queda el fondo limpio.
 - **Favoritas**: una barra tipo dock con las apps que elijas.
 - **Todas las apps**: bajando con el control remoto aparece el resto, en orden alfabético.
 - Sin banners de películas: solo apps.

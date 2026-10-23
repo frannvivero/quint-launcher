@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,19 +59,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val InkColor = Color(0xFF1C1C1E)
-private val MutedColor = Color(0xFF6E6E73)
 private val AppleBlue = Color(0xFF0A84FF)
-private val ButtonGray = Color(0xFFE5E5EA)
 
 // ---------------------------------------------------------------- Barra superior
 
 @Composable
 fun TopBar(
     netType: NetType,
+    night: Boolean,
     onNetworkClick: () -> Unit,
+    onNightClick: () -> Unit,
     onSettingsClick: () -> Unit,
 ) {
+    val p = LocalPalette.current
     val now by produceState(initialValue = Date()) {
         while (true) {
             value = Date()
@@ -84,10 +85,11 @@ fun TopBar(
             .replaceFirstChar { it.uppercase() }
     }
 
+    // El grid ya tiene 48dp de margen a cada lado; acá solo sumamos lo que falta para alinear.
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 56.dp, end = 48.dp, top = 28.dp, bottom = 12.dp),
+            .padding(start = 8.dp, top = 28.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -96,15 +98,15 @@ fun TopBar(
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-1).sp,
-                color = InkColor,
+                color = p.ink,
             )
-            Text(text = date, fontSize = 16.sp, color = MutedColor)
+            Text(text = date, fontSize = 16.sp, color = p.muted)
         }
         Text(
             text = clock,
             fontSize = 22.sp,
             fontWeight = FontWeight.SemiBold,
-            color = InkColor,
+            color = p.ink,
             modifier = Modifier.padding(end = 20.dp),
         )
         CircleButton(
@@ -118,6 +120,12 @@ fun TopBar(
         )
         Box(modifier = Modifier.width(14.dp))
         CircleButton(
+            iconRes = R.drawable.ic_moon,
+            description = if (night) "Desactivar modo nocturno" else "Activar modo nocturno",
+            onClick = onNightClick,
+        )
+        Box(modifier = Modifier.width(14.dp))
+        CircleButton(
             iconRes = R.drawable.ic_settings,
             description = "Ajustes",
             onClick = onSettingsClick,
@@ -127,6 +135,7 @@ fun TopBar(
 
 @Composable
 fun CircleButton(iconRes: Int, description: String, onClick: () -> Unit) {
+    val p = LocalPalette.current
     var focused by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (focused) 1.15f else 1f, tween(180), label = "btnScale")
     val elevation by animateDpAsState(if (focused) 14.dp else 0.dp, tween(180), label = "btnElevation")
@@ -139,9 +148,9 @@ fun CircleButton(iconRes: Int, description: String, onClick: () -> Unit) {
                 scaleX = scale
                 scaleY = scale
             }
-            .shadow(elevation, CircleShape, ambientColor = Color(0x33000000), spotColor = Color(0x55000000))
+            .shadow(elevation, CircleShape, ambientColor = p.shadow, spotColor = p.shadow)
             .clip(CircleShape)
-            .background(if (focused) Color.White else ButtonGray)
+            .background(if (focused) p.focusFill else p.buttonBg)
             .onFocusChanged { focused = it.isFocused }
             .clickable(interactionSource = interaction, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,
@@ -149,7 +158,7 @@ fun CircleButton(iconRes: Int, description: String, onClick: () -> Unit) {
         Icon(
             painter = painterResource(iconRes),
             contentDescription = description,
-            tint = InkColor,
+            tint = p.ink,
             modifier = Modifier.size(26.dp),
         )
     }
@@ -159,18 +168,20 @@ fun CircleButton(iconRes: Int, description: String, onClick: () -> Unit) {
 
 @Composable
 fun SectionTitle(text: String) {
+    val p = LocalPalette.current
     Text(
         text = text,
         fontSize = 22.sp,
         fontWeight = FontWeight.Bold,
         letterSpacing = (-0.3).sp,
-        color = InkColor,
+        color = p.ink,
         modifier = Modifier.padding(start = 8.dp, top = 8.dp),
     )
 }
 
 @Composable
 fun PillButton(text: String, onClick: () -> Unit) {
+    val p = LocalPalette.current
     var focused by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (focused) 1.08f else 1f, tween(180), label = "pillScale")
     val interaction = remember { MutableInteractionSource() }
@@ -183,7 +194,7 @@ fun PillButton(text: String, onClick: () -> Unit) {
                 scaleY = scale
             }
             .clip(shape)
-            .background(if (focused) AppleBlue else ButtonGray)
+            .background(if (focused) AppleBlue else p.buttonBg)
             .onFocusChanged { focused = it.isFocused }
             .clickable(interactionSource = interaction, indication = null, onClick = onClick)
             .padding(horizontal = 22.dp, vertical = 10.dp),
@@ -193,7 +204,7 @@ fun PillButton(text: String, onClick: () -> Unit) {
             text = text,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = if (focused) Color.White else InkColor,
+            color = if (focused) Color.White else p.ink,
         )
     }
 }
@@ -207,6 +218,7 @@ fun Dock(
     onAppClick: (AppEntry) -> Unit,
     onAppLongClick: (AppEntry) -> Unit,
 ) {
+    val p = LocalPalette.current
     val shape = RoundedCornerShape(36.dp)
     val firstFocus = remember { FocusRequester() }
 
@@ -220,16 +232,16 @@ fun Dock(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(14.dp, shape, ambientColor = Color(0x22000000), spotColor = Color(0x22000000))
+            .shadow(14.dp, shape, ambientColor = p.shadow, spotColor = p.shadow)
             .clip(shape)
-            .background(Color.White)
-            .border(1.dp, Color(0x14000000), shape),
+            .background(p.dockBg)
+            .border(1.dp, p.dockBorder, shape),
     ) {
         if (favApps.isEmpty()) {
             Text(
                 text = stringResource(R.string.no_favorites),
                 fontSize = 16.sp,
-                color = MutedColor,
+                color = p.muted,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -269,6 +281,7 @@ fun AppTile(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
+    val p = LocalPalette.current
     var focused by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (focused) 1.1f else 1f, tween(180), label = "tileScale")
     val elevation by animateDpAsState(if (focused) 20.dp else 3.dp, tween(180), label = "tileElevation")
@@ -298,9 +311,9 @@ fun AppTile(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f)
-                .shadow(elevation, shape, ambientColor = Color(0x33000000), spotColor = Color(0x66000000))
+                .shadow(elevation, shape, ambientColor = p.shadow, spotColor = p.shadow)
                 .clip(shape)
-                .background(Brush.verticalGradient(listOf(Color(0xFF3A3A3C), Color(0xFF1C1C1E))))
+                .background(Brush.verticalGradient(listOf(p.tileTop, p.tileBottom)))
                 .then(if (focused) Modifier.border(3.dp, Color.White, shape) else Modifier),
             contentAlignment = Alignment.Center,
         ) {
@@ -328,13 +341,13 @@ fun AppTile(
                         .padding(8.dp)
                         .size(26.dp)
                         .clip(CircleShape)
-                        .background(if (isFavorite) AppleBlue else Color.White.copy(alpha = 0.92f)),
+                        .background(if (isFavorite) AppleBlue else p.dockBg.copy(alpha = 0.92f)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         painter = painterResource(if (isFavorite) R.drawable.ic_check else R.drawable.ic_add),
                         contentDescription = null,
-                        tint = if (isFavorite) Color.White else Color(0xFF3A3A3C),
+                        tint = if (isFavorite) Color.White else p.ink,
                         modifier = Modifier.size(16.dp),
                     )
                 }
@@ -345,7 +358,7 @@ fun AppTile(
             text = app.label,
             fontSize = 14.sp,
             fontWeight = if (focused) FontWeight.SemiBold else FontWeight.Medium,
-            color = if (focused) InkColor else MutedColor,
+            color = if (focused) p.ink else p.muted,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,

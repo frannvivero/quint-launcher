@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,8 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -49,7 +48,10 @@ fun LauncherScreen() {
     var apps by remember { mutableStateOf<List<AppEntry>>(emptyList()) }
     var favorites by remember { mutableStateOf<List<String>>(emptyList()) }
     var editMode by remember { mutableStateOf(false) }
+    var night by remember { mutableStateOf(store.loadNight()) }
     var refresh by remember { mutableIntStateOf(0) }
+
+    val palette = if (night) DarkPalette else LightPalette
 
     // Releer las apps cada vez que el launcher vuelve a primer plano (instalaciones, desinstalaciones).
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -69,7 +71,7 @@ fun LauncherScreen() {
         favorites = saved.filter { it in installed }
     }
 
-    // El botón Atrás en un launcher no tiene que hacer nada (solo sale del modo edición).
+    // El botón Atrás no hace nada en el launcher (solo sale del modo edición).
     BackHandler(enabled = true) {
         if (editMode) editMode = false
     }
@@ -82,6 +84,11 @@ fun LauncherScreen() {
     fun toggleFavorite(pkg: String) {
         favorites = if (pkg in favorites) favorites - pkg else favorites + pkg
         store.save(favorites)
+    }
+
+    fun toggleNight() {
+        night = !night
+        store.saveNight(night)
     }
 
     fun launch(app: AppEntry) {
@@ -102,25 +109,31 @@ fun LauncherScreen() {
         if (editMode) toggleFavorite(app.packageName) else launch(app)
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color.White, Color(0xFFEFEFF4)))),
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            TopBar(
-                netType = netType,
-                onNetworkClick = { openSystem(Settings.ACTION_WIFI_SETTINGS) },
-                onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },
-            )
-
+    CompositionLocalProvider(LocalPalette provides palette) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(palette.bg),
+        ) {
+            // Todo vive en un solo grid con scroll: barra, favoritas y apps suben juntas,
+            // así al volver arriba queda el fondo limpio.
             LazyVerticalGrid(
                 columns = GridCells.Fixed(5),
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 48.dp, end = 48.dp, top = 8.dp, bottom = 56.dp),
+                contentPadding = PaddingValues(start = 48.dp, end = 48.dp, bottom = 56.dp),
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
+                item(key = "topbar", span = { GridItemSpan(maxLineSpan) }) {
+                    TopBar(
+                        netType = netType,
+                        night = night,
+                        onNetworkClick = { openSystem(Settings.ACTION_WIFI_SETTINGS) },
+                        onNightClick = { toggleNight() },
+                        onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },
+                    )
+                }
+
                 item(key = "favorites_title", span = { GridItemSpan(maxLineSpan) }) {
                     SectionTitle(stringResource(R.string.favorites_title))
                 }
@@ -147,7 +160,7 @@ fun LauncherScreen() {
                                 Text(
                                     text = stringResource(R.string.edit_hint),
                                     fontSize = 14.sp,
-                                    color = Color(0xFF6E6E73),
+                                    color = palette.muted,
                                     modifier = Modifier.padding(start = 8.dp, top = 2.dp),
                                 )
                             }

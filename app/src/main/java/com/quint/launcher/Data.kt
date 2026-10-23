@@ -68,8 +68,15 @@ class FavoritesStore(context: Context) {
         prefs.edit().putString(KEY, list.joinToString("\n")).apply()
     }
 
+    fun loadNight(): Boolean = prefs.getBoolean(NIGHT_KEY, false)
+
+    fun saveNight(enabled: Boolean) {
+        prefs.edit().putBoolean(NIGHT_KEY, enabled).apply()
+    }
+
     private companion object {
         const val KEY = "favorites"
+        const val NIGHT_KEY = "night_mode"
     }
 }
 
