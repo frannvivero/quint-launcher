@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -109,6 +112,8 @@ fun LauncherScreen() {
         if (editMode) toggleFavorite(app.packageName) else launch(app)
     }
 
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
     CompositionLocalProvider(LocalPalette provides palette) {
         Box(
             modifier = Modifier
@@ -124,27 +129,31 @@ fun LauncherScreen() {
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                item(key = "topbar", span = { GridItemSpan(maxLineSpan) }) {
-                    TopBar(
-                        netType = netType,
-                        night = night,
-                        onNetworkClick = { openSystem(Settings.ACTION_WIFI_SETTINGS) },
-                        onNightClick = { toggleNight() },
-                        onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },
-                    )
-                }
-
-                item(key = "favorites_title", span = { GridItemSpan(maxLineSpan) }) {
-                    SectionTitle(stringResource(R.string.favorites_title))
-                }
-
-                item(key = "dock", span = { GridItemSpan(maxLineSpan) }) {
-                    Dock(
-                        favApps = favApps,
-                        editMode = editMode,
-                        onAppClick = { onAppClick(it) },
-                        onAppLongClick = { toggleFavorite(it.packageName) },
-                    )
+                // Primera pantalla: barra + favoritas, ocupando toda la altura.
+                // El cajón de apps queda debajo del borde y se ve al bajar.
+                item(key = "home", span = { GridItemSpan(maxLineSpan) }) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(screenHeight),
+                    ) {
+                        TopBar(
+                            netType = netType,
+                            night = night,
+                            onNetworkClick = { openSystem(Settings.ACTION_WIFI_SETTINGS) },
+                            onNightClick = { toggleNight() },
+                            onSettingsClick = { openSystem(Settings.ACTION_SETTINGS) },
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        SectionTitle(stringResource(R.string.favorites_title))
+                        Dock(
+                            favApps = favApps,
+                            editMode = editMode,
+                            onAppClick = { onAppClick(it) },
+                            onAppLongClick = { toggleFavorite(it.packageName) },
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
                 }
 
                 item(key = "all_apps_header", span = { GridItemSpan(maxLineSpan) }) {
