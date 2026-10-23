@@ -20,9 +20,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -149,7 +149,7 @@ fun LauncherScreen() {
         if (editMode) toggleFavorite(app.packageName) else launch(app)
     }
 
-    MaterialTheme(typography = Typography(defaultFontFamily = AppFont)) {
+    ProvideTextStyle(TextStyle(fontFamily = AppFont)) {
         CompositionLocalProvider(LocalPalette provides palette) {
             Box(
                 modifier = Modifier
