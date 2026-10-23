@@ -5,7 +5,8 @@ Launcher para Android TV (pensado para una Quint de 32" con Android 11; todavía
 ## Qué tiene
 
 - Arriba a la derecha: hora, **red** (Wi‑Fi / Ethernet / sin conexión, se actualiza sola), **modo nocturno** (luna) y **ajustes**. Red y ajustes abren la configuración del sistema.
-- **Modo nocturno**: fondo negro y textos blancos. Queda guardado aunque apagues la tele.
+- **Modo día/noche**: el botón de luna cambia entre *automático* (sigue el atardecer de Federal), *nocturno* y *diurno*. Queda guardado aunque apagues la tele.
+- **Clima de Federal, Entre Ríos**: temperatura, máxima y mínima, con ícono según el cielo (datos de Open-Meteo).
 - Al bajar, toda la pantalla se desplaza (barra, favoritas y apps), así al volver arriba queda el fondo limpio.
 - **Favoritas**: una barra tipo dock con las apps que elijas.
 - **Todas las apps**: bajando con el control remoto aparece el resto, en orden alfabético.
@@ -41,3 +42,10 @@ Android Studio (Hedgehog o más nuevo) → abrir la carpeta → Run. Kotlin 1.9.
 - Android no trae la tipografía SF de Apple; se usa la del sistema.
 - Los tiles usan el banner que cada app publica para Android TV; si una app no tiene, muestra su ícono sobre fondo oscuro.
 - El texto de las secciones está en `app/src/main/res/values/strings.xml` (ahí se puede cambiar "Favoritas" por "Recientes", por ejemplo).
+
+## Créditos
+
+- Ideas de clima, modo día/noche por atardecer y estética tomadas de [Free My TV](https://github.com/simbasjungles/free-my-tv) (MIT). Ver `licenses/MIT-free-my-tv.txt`.
+- Íconos del clima: Material Symbols (Apache 2.0). Ver `licenses/Apache-2.0-material-symbols.txt`.
+- Fuente: Inter (SIL OFL). Ver `licenses/OFL-Inter.txt`.
+- Clima: [Open-Meteo](https://open-meteo.com/) (uso gratuito sin clave).

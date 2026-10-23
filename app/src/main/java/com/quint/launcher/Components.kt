@@ -43,6 +43,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -102,17 +103,36 @@ fun TopBar(
                 color = p.ink,
             )
             Text(text = date, fontSize = 16.sp, color = p.muted)
-            Text(
-                text = if (weather != null) {
-                    val desc = if (weather.description.isNotEmpty()) " · ${weather.description}" else ""
-                    "Federal · ${weather.temp}°$desc"
-                } else {
-                    "Federal"
-                },
-                fontSize = 16.sp,
-                color = p.muted,
-                modifier = Modifier.padding(top = 4.dp),
-            )
+            Row(
+                modifier = Modifier.padding(top = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (weather != null) {
+                    Image(
+                        painter = painterResource(weather.iconRes),
+                        contentDescription = weather.description,
+                        colorFilter = ColorFilter.tint(p.ink),
+                        modifier = Modifier.size(40.dp),
+                    )
+                    Box(modifier = Modifier.width(12.dp))
+                }
+                Column {
+                    Text(
+                        text = if (weather != null) "Federal · ${weather.temp}°" else "Federal",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = p.ink,
+                    )
+                    if (weather != null) {
+                        val range = listOfNotNull(
+                            weather.max?.let { "Máx $it°" },
+                            weather.min?.let { "Mín $it°" },
+                        ).joinToString(" · ")
+                        val line = listOf(weather.description, range).filter { it.isNotEmpty() }.joinToString(" · ")
+                        Text(text = line, fontSize = 15.sp, color = p.muted)
+                    }
+                }
+            }
         }
         Text(
             text = clock,
