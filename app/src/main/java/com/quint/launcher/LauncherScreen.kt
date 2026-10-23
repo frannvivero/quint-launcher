@@ -19,9 +19,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,6 +117,8 @@ fun LauncherScreen() {
     }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val gridState = rememberLazyGridState()
+    val scope = rememberCoroutineScope()
 
     CompositionLocalProvider(LocalPalette provides palette) {
         Box(
@@ -123,6 +129,7 @@ fun LauncherScreen() {
             // Todo vive en un solo grid con scroll: barra, favoritas y apps suben juntas,
             // así al volver arriba queda el fondo limpio.
             LazyVerticalGrid(
+                state = gridState,
                 columns = GridCells.Fixed(5),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 48.dp, end = 48.dp, bottom = 56.dp),
@@ -135,7 +142,11 @@ fun LauncherScreen() {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(screenHeight),
+                            .height(screenHeight)
+                            .onFocusChanged {
+                                // Si el foco vuelve a la primera pantalla, la página vuelve al inicio.
+                                if (it.hasFocus) scope.launch { gridState.animateScrollToItem(0) }
+                            },
                     ) {
                         TopBar(
                             netType = netType,
